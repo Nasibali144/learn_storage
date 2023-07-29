@@ -28,7 +28,7 @@ class HomeSharedPreferences extends StatefulWidget {
 
 class _HomeSharedPreferencesState extends State<HomeSharedPreferences> {
 
-  String data = "";
+  String text = "No Data";
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _HomeSharedPreferencesState extends State<HomeSharedPreferences> {
   }
 
   void load() async {
-    data = await Prefs.read(StorageKey.data) ?? "";
+    text = await Prefs.read(StorageKey.data) ?? "No Data";
     setState(() {});
   }
 
@@ -57,16 +57,23 @@ class _HomeSharedPreferencesState extends State<HomeSharedPreferences> {
                   hintText: "Write Data"
                 ),
                 style: Theme.of(context).textTheme.headlineMedium,
-                onSubmitted: (data) async {
-                  await Prefs.store(StorageKey.data, data).whenComplete(load);
+                onSubmitted: (value) async { /// value = "I am writing"
+                  await Prefs.store(StorageKey.data, value);
+                  load();
                 },
               ),
 
               /// read
-              Text(data, style: Theme.of(context).textTheme.headlineLarge,),
+              Text(text, style: Theme.of(context).textTheme.headlineLarge,),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Prefs.remove(StorageKey.data).whenComplete(() => load());
+        },
+        child: const Icon(Icons.delete),
       ),
     );
   }
