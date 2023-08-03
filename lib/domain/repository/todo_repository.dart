@@ -8,6 +8,7 @@ abstract class TodoRepository {
   List<Todo> readTodo();
   Future<bool> deleteTodo(Todo todo);
   Future<bool> clearCache();
+  Future<bool> editTodo(Todo todo);
 }
 
 class TodoRepositoryImpl implements TodoRepository {
@@ -24,7 +25,7 @@ class TodoRepositoryImpl implements TodoRepository {
     /// Object => json => String
     final list = readTodo();
     list.remove(todo);
-    final json = list.map((todo) => todo.toJson());
+    final json = list.map((todo) => todo.toJson()).toList();
     final data = jsonEncode(json);
     return dataSource.store(StorageKey.todos, data);
   }
@@ -42,7 +43,18 @@ class TodoRepositoryImpl implements TodoRepository {
     /// Object => json => String
     final list = readTodo();
     list.add(todo);
-    final json = list.map((todo) => todo.toJson());
+    final json = list.map((todo) => todo.toJson()).toList();
+    final data = jsonEncode(json);
+    return dataSource.store(StorageKey.todos, data);
+  }
+
+  @override
+  Future<bool> editTodo(Todo todo) {
+    /// Object => json => String
+    final list = readTodo();
+    list.removeWhere((element) => element.id == todo.id);
+    list.add(todo);
+    final json = list.map((todo) => todo.toJson()).toList();
     final data = jsonEncode(json);
     return dataSource.store(StorageKey.todos, data);
   }
