@@ -36,11 +36,12 @@ class _HomeState extends State<Home> {
 
   void deleteTodo(Todo todo) async {
     final result = await repository.deleteTodo(todo);
-    if(result && mounted) {
+    if (result && mounted) {
       getAllTodos();
     } else {
       /// error msg
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Some thing error, try again later")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Some thing error, try again later")));
     }
   }
 
@@ -52,11 +53,34 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void changeTheme() async {
+    if(mode.value == ThemeMode.light) {
+      await themeRepository.setMode(ThemeMode.dark);
+      mode.value = ThemeMode.dark;
+    } else {
+      await themeRepository.setMode(ThemeMode.light);
+      mode.value = ThemeMode.light;
+    }
+  }
+
   /// ui => build
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Todos")),
+      appBar: AppBar(
+        title: const Text("Todos"),
+        actions: [
+          IconButton(
+            onPressed: changeTheme,
+            icon: ValueListenableBuilder<ThemeMode>(
+                valueListenable: mode,
+                builder: (_, mode, child) {
+                return Icon(mode != ThemeMode.light ? Icons.light_mode: Icons.dark_mode);
+              }
+            ),
+          )
+        ],
+      ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: todos.length,

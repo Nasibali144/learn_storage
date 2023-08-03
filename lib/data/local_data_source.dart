@@ -31,4 +31,5 @@ class LocalDataSourceImpl implements LocalDataSource {
 
 enum StorageKey {
   todos,
+  mode,
 }

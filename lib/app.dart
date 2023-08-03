@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learn_storage/core/service_locator.dart';
 import 'package:learn_storage/presentation/screens/home_screen.dart';
 
 class TodoApp extends StatelessWidget {
@@ -6,11 +7,17 @@ class TodoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      themeMode: ThemeMode.dark,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      home: const Home(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: mode,
+      child: const Home(),
+      builder: (_, mode, child) {
+        return MaterialApp(
+          themeMode: mode,
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          home: child,
+        );
+      }
     );
   }
 }
